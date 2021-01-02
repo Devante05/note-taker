@@ -1,6 +1,11 @@
 const express = require('express')
-const app = express ();
+const app = express();
+const { v4: uuidv4 } = require('uuid');
+
+let dbJSON = require("./db/db.json");
+
 PORT = process.env.PORT || 3004
+
 
 app.use(express.static("public"));
 app.use(express.urlencoded({extended: true}));
@@ -9,40 +14,53 @@ app.use(express.json());
 
 const fs = require('fs');
 const path = require('path');
-const DB_PATH = path.join(__dirname, './Develop/db/db.json')
-
-const setDB = new_db => fs.writeFileSync( DB_PATH , JSON.stringify( new_db ));
-const getDB = () => JSON.parse(fs.readFileSync(DB_PATH, 'utf8'));
 
 
 
+// const note = {...req.body, id: uuidv4()}
+//html routes
 
 app.get("/notes", function(req, res) {
     res.sendFile(path.join(__dirname, "../Develop/public/notes.html"));
   });
 
-  app.get("*", function(req, res) {
-    res.sendFile(path.join(__dirname, "../Develop/public/index.html"));
+
+
+  //api routes
+  
+app.get("/api/notes", (req, res) => {
+    res.json(dbJSON);
+
+})
+
+
+app.post("/api/notes", (req, res) => {
+// Validate request body
+if(!req.body.title) {
+    return res.json({error: "Missing required title"});
+  }
+
+  const note = {...req.body, id: uuidv4()}
+
+  dbJSON.push(note);
+
+
+  fs.writeFile(path.join(__dirname, "db/db.json"), JSON.stringify(dbJSON), (err) => {
+    if (err) {
+      return res.json({error: "Error writing to file"});
+    }
+
+    return res.json(note);
   });
-
-  
-  
-  
-var notesArr = require("./db/db.json");
-  
-app.post("/api/notes", function(req, res) {
-    const db = getDB();
-
-    if (notesArr.length <= 0) {
-      notesArr.push(req.body.note);
-      res.json(db);
-    }})
+});
 
 
-// app.post("/api/notes", (req, res)) => {
-//       notes.push(req.body);
-//       res.json(true);
-// }
+
+app.get("*", function(req, res) {
+  res.sendFile(path.join(__dirname,`../Develop` + '/public' + '/index.html'));
+
+});
+
 
 
 app.listen(PORT, () => console.log("http://localhost:" + PORT));
