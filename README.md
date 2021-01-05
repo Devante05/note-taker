@@ -1,5 +1,5 @@
 
-  ### The best project
+  ### NOTE TAKER
 
   ## About The Project
   This project was built for the purpose retaining information that is naturally forgotten!
