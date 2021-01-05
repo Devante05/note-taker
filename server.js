@@ -17,7 +17,7 @@ const path = require("path");
 //html routes
 
 app.get("/notes", function (req, res) {
-  res.sendFile(path.join(__dirname, "../Develop/public/notes.html"));
+  res.sendFile(path.join(__dirname, "/public/notes.html"));
 });
 
 //api routes
@@ -37,7 +37,7 @@ app.post("/api/notes", (req, res) => {
   dbJSON.push(note);
 
   fs.writeFile(
-    path.join(__dirname, "db/db.json"),
+    path.join(__dirname, "./db/db.json"),
     JSON.stringify(dbJSON),
     (err) => {
       if (err) {
@@ -54,7 +54,7 @@ app.delete("/api/notes/:id", (req, res) => {
 
   dbJSON = dbJSON.filter((note) => note.id !== id);
   fs.writeFile(
-    path.join(__dirname, "db/db.json"),
+    path.join(__dirname, "./db/db.json"),
     JSON.stringify(dbJSON),
     (err) => {
       if (err) {
@@ -67,7 +67,7 @@ app.delete("/api/notes/:id", (req, res) => {
 });
 
 app.get("*", function (req, res) {
-  res.sendFile(path.join(__dirname, `../Develop` + "/public" + "/index.html"));
+  res.sendFile(path.join(__dirname, "/public" + "/index.html"));
 });
 
 app.listen(PORT, () => console.log("http://localhost:" + PORT));
